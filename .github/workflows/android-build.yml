@@ -4,9 +4,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5
@@ -14,21 +15,21 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
+      - name: Install Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Accept SDK licenses
+      - name: Accept SDK Licenses
         run: yes | sdkmanager --licenses
 
-      - name: Grant gradlew permission
+      - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build Bcore release AAR
-        run: ./gradlew :Bcore:assembleRelease --stacktrace
+      - name: Build Bcore
+        run: ./gradlew :Bcore:assembleRelease --stacktrace --info
         env:
-          GRADLE_OPTS: "-Dmaven.repo.local=.gradle/caches -Xmx4g"
+          GRADLE_OPTS: "-Xmx4g"
 
-      - name: Upload AAR
+      - name: Upload AAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Bcore_AAR
